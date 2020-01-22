@@ -1,0 +1,77 @@
+
+AWSTemplateFormatVersion: "2010-09-09"
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      -
+        Label:
+          default: "Apache Web Server Parameters"
+        Parameters:
+          - EC2Name
+          - EC2InstanceAMI
+          - KeyName
+          - InstanceType
+          - Ec2SecurityGroup 
+          - SubnetId
+    ParameterLabels:
+      EC2Name:
+        default: "Instance name"
+      EC2InstanceAMI:
+        default: "Apache AMI for Web Servers"  
+      KeyName:
+        default: "Key Pair for Web Server"  
+      InstanceType:
+        default: "Instance Type"  
+      Ec2SecurityGroup:
+        default: "Instance Security Group"
+      SubnetId:
+        default: "Subnet ID"
+Parameters:
+  EC2Name:
+    Type: String
+    Description: "A friendly name for our EC2 instance"
+    Default: "apache-ec2"
+  EC2InstanceAMI:
+    Type: String
+    Description: "This is the AMI used in Production"
+    Default: "ami-062f7200baf2fa504"
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: "This is the key"
+    Default: test-keypair
+  InstanceType: 
+    Type: String
+    Default: t2.micro
+    AllowedValues: 
+      - t2.micro
+      - m1.small
+      - m1.large
+    Description: Enter t2.micro, m1.small, or m1.large. Default is t2.micro.
+  Ec2SecurityGroup:
+    Type: String
+    Default: sg-0f70c8be6c14bff6d
+    Description: Our Security Group
+  SubnetId:
+    Type: String
+    Default: subnet-957609a9
+    Description: Subnet ID
+
+Resources: 
+  EC2Instance:
+      Type: AWS::EC2::Instance      
+      Properties:
+          UserData: !Base64 |
+            #!/bin/bash -x
+            sudo yum install docker -y
+            sudo service docker start
+            docker run -d -p 80:80 centos/httpd
+          SubnetId: !Ref SubnetId
+          ImageId: !Ref EC2InstanceAMI
+          KeyName: !Ref KeyName
+          InstanceType: !Ref InstanceType
+          Tags:
+            -
+              Key: "Name"
+              Value: !Ref EC2Name
+          SecurityGroupIds:
+          - !Ref Ec2SecurityGroup
