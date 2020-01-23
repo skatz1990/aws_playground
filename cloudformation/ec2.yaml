@@ -1,4 +1,3 @@
-
 AWSTemplateFormatVersion: "2010-09-09"
 Metadata:
   AWS::CloudFormation::Interface:
@@ -34,7 +33,7 @@ Parameters:
   EC2InstanceAMI:
     Type: String
     Description: "This is the AMI used in Production"
-    Default: "ami-062f7200baf2fa504"
+    Default: "ami-03caa3f860895f82e"
   KeyName:
     Type: AWS::EC2::KeyPair::KeyName
     Description: "This is the key"
@@ -49,11 +48,11 @@ Parameters:
     Description: Enter t2.micro, m1.small, or m1.large. Default is t2.micro.
   Ec2SecurityGroup:
     Type: String
-    Default: sg-0f70c8be6c14bff6d
+    Default: sg-0744fefce238b2852
     Description: Our Security Group
   SubnetId:
     Type: String
-    Default: subnet-957609a9
+    Default: subnet-7f2ce419
     Description: Subnet ID
 
 Resources: 
