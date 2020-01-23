@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: "Security Group Parameters"
+        Parameters:
+          - SGName
+          - SGDescription
+    ParameterLabels:
+      SGName:
+        default: "Security Group name"
+      SGDescription:
+        default: "Security Group description"
+Parameters:
+  SGName:
+    Type: String
+    Description: "A friendly name for our SG"
+    Default: "apache-SG"
+  SGDescription:
+    Type: String
+    Description: "A friendly description for our SG"
+Resources:
+  EC2SG54HCC:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Ref SGDescription
+      GroupName: !Ref SGName
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIpv6: ::/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIpv6: ::/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIpv6: ::/0
+      Tags:
+        - Key: "Name"
+          Value: !Ref SGName
