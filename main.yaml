@@ -11,6 +11,11 @@ Metadata:
           - InstanceType
           - Ec2SecurityGroup 
           - SubnetId
+      - Label:
+          default: "Security Group Parameters"
+        Parameters:
+          - SGName
+          - SGDescription
     ParameterLabels:
       EC2Name:
         default: "Instance name"
@@ -24,6 +29,11 @@ Metadata:
         default: "Instance Security Group"
       SubnetId:
         default: "Subnet ID"
+              
+      SGName:
+        default: "Security Group name"
+      SGDescription:
+        default: "Security Group description"
 Parameters:
   EC2Name:
     Type: String
@@ -53,23 +63,28 @@ Parameters:
     Type: String
     Default: subnet-7f2ce419
     Description: Subnet ID
-
-Resources: 
-  EC2Instance:
-    Type: AWS::EC2::Instance      
+  SGName:
+    Type: String
+    Description: "A friendly name for our SG"
+    Default: "apache-SG"
+  SGDescription:
+    Type: String
+    Description: "A friendly description for our SG"
+Resources:
+  EC2:
+    Type: AWS::CloudFormation::Stack
     Properties:
-        UserData: !Base64 |
-          #!/bin/bash -x
-          sudo yum install docker -y
-          sudo service docker start
-          docker run -d -p 80:80 centos/httpd
+      TemplateURL: "https://skatz1990-stack.s3-us-west-1.amazonaws.com/ec2.yaml"
+      Parameters:
         SubnetId: !Ref SubnetId
         ImageId: !Ref EC2InstanceAMI
         KeyName: !Ref KeyName
         InstanceType: !Ref InstanceType
-        Tags:
-          -
-            Key: "Name"
-            Value: !Ref EC2Name
-        SecurityGroupIds:
-        - !Ref Ec2SecurityGroup
+        SecurityGroupIds: !Ref Ec2SecurityGroup
+  SG:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: "https://skatz1990-stack.s3-us-west-1.amazonaws.com/sg.yaml"
+      Parameters:
+        GroupDescription: !Ref SGDescription
+        GroupName: !Ref SGName
